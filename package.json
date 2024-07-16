@@ -1,0 +1,25 @@
+{
+  "name": "api-rest-red-social",
+  "version": "1.0.0",
+  "description": "API REST con Node Mongo, Express y JWT para una red social",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "author": "Gustavo Marchena",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.1",
+    "express-validator": "^7.1.0",
+    "mongoose": "^8.5.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

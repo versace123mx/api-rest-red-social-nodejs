@@ -6,7 +6,7 @@ import { validarArchivoSubir } from '../middleware/validar-archivo.js'
 const route = Router();
 
 //Rutas de pruebas
-route.get('/red-social/publication',(req,res)=>{
+route.get('/publication',(req,res)=>{
     res.status(200).json({msg:"Desde publicacion"})
 })
 

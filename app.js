@@ -39,7 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))//para recibir datos desde un formulario si carga de imagenes postman -> body -> x-www-form-urlencoded
 
 //Crear Rutas, como todas comienzan con /api ahi mandamos todas en el array
-app.use("/api",[userRouter,publicationRouter,followRouter])
+app.use("/api/red-social",[userRouter,publicationRouter,followRouter])
 
 // Middleware para manejar rutas no encontradas
 app.use((req, res) => {

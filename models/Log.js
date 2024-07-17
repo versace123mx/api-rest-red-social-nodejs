@@ -9,7 +9,7 @@ const LogSchema = mongoose.Schema({
     usuario: {
         type: mongoose.Schema.Types.ObjectId, //este es el que indica que sera un tipo id objeto
         ref: 'User', //este es la referencia asia el id del usuario
-        required: true
+        default: null
     },
     host:{
         type: String

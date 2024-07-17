@@ -11,6 +11,15 @@ const LogSchema = mongoose.Schema({
         ref: 'User', //este es la referencia asia el id del usuario
         required: true
     },
+    host:{
+        type: String
+    },
+    ip:{
+        type: String
+    },
+    pathUrl:{
+        type: String
+    },
     create_at:{
         type: Date,
         default:Date.now()

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { check } from 'express-validator'
-import { validarCampos, validarArchivoSubir } from '../middleware/index.js'
+import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
 import { register, login } from "../controllers/index.js";
 const route = Router();
 

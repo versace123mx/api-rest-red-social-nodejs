@@ -23,6 +23,10 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    estado:{
+        type: Boolean,
+        default: true
+    },
     role:{
         type: String,
         default:"role_user"
@@ -41,6 +45,12 @@ const UserSchema = mongoose.Schema({
     }
 })
 
+//Retornamos solo los datos que nesecitamos ver no el passsword, no el __v, no _id esto es del Schema y al _id le cambiamos el nombre visualmente
+UserSchema.methods.toJSON = function(){
+    const {__v, password, _id, estado, role, ...user} = this.toObject();
+    user.uid = _id;
+    return user;
+}
 
 //Creamos el modelo dentro colocamos el nombre de la coleccion y le pasamos el schema, la coleccione ahora en mongo sera Articulo
 const User = mongoose.model('User',UserSchema);

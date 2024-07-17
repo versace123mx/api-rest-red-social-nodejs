@@ -1,5 +1,6 @@
-import {register} from './user.js'
+import {register,login} from './user.js'
 
 export {
-    register
+    register,
+    login
 }

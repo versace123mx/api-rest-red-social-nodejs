@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs'
 import User from '../models/User.js'
+import generarJWT   from '../helper/generarJWT.js'
 
 //Registrar usuario
 const register = async (req,res) => {
@@ -29,6 +30,39 @@ const register = async (req,res) => {
     }
 }
 
+//Login de usuario y generar token
+const login = async (req,res) => {
+
+    //Extraigo lo que llega en el body
+    const { email, password } = req.body
+
+    try {
+        
+        //verifico si el usuario existe
+        const user = await User.findOne({email})
+        if(!user){
+            return res.status(400).json({ status: "error", msg: "Usuario no encontrado" })
+        }
+        
+        //validar contraseña
+        const validPassword = bcrypt.compareSync(password, user.password)
+        if (!validPassword){
+            return res.status(400).json({ status:"error", msg: 'El email o password son incorrectos. - password'})
+        }
+
+        //Generar JWT se accede user.id o user._id ya que mongo asi lo permite id es un alias de _id
+        const token = generarJWT(user.id)
+
+        res.status(200).json({status:"success",msg:"login",token})
+    } catch (error) {
+        return res.status(400).json({ status:"error", msg: 'Error en la generacion del token'})
+    }
+    
+}
+
+
+
 export {
-    register
+    register,
+    login
 }

@@ -1,11 +1,10 @@
-import {Router} from "express";
+import { Router } from "express";
 import { check } from 'express-validator'
-import { validarCampos } from '../middleware/validar-campos.js'
-import { validarArchivoSubir } from '../middleware/validar-archivo.js'
-import {register} from "../controllers/index.js";
+import { validarCampos, validarArchivoSubir } from '../middleware/index.js'
+import { register, login } from "../controllers/index.js";
 const route = Router();
 
-//Rutas de pruebas
+//Ruta para crear el usuario
 route.post('/user',[
     check('name','El campo nombre es requerido').notEmpty().trim().toLowerCase(),
     check('nick','El campo nick es requerido').notEmpty().trim().toLowerCase(),
@@ -17,5 +16,13 @@ route.post('/user',[
     check('surname').trim().toLowerCase(),
     validarCampos
 ],register)
+
+//Ruta para el login y generar token
+route.post('/login',[
+    check('email','El campo email es requerido').notEmpty().trim().toLowerCase(),
+    check('email','El campo email no tine formato de email valido').isEmail().trim().toLowerCase(),
+    check('password','El campo password es requerido').notEmpty().trim(),
+    validarCampos
+],login)
 
 export default route

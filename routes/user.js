@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { register, login } from "../controllers/index.js";
+import { register, login, profile } from "../controllers/index.js";
 const route = Router();
+
+//Rutas publicas
 
 //Ruta para crear el usuario
 route.post('/user',[
@@ -24,5 +26,16 @@ route.post('/login',[
     check('password','El campo password es requerido').notEmpty().trim(),
     validarCampos
 ],login)
+
+
+//Rutas protegidas con el middleware
+
+//obtener un perfil por id
+route.get('/profile/:id',[
+    validarJWT,
+    check('id','No es un id de Mongo valido').isMongoId(),
+    validarCampos
+],profile)
+
 
 export default route

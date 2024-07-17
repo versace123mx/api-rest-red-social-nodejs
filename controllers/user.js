@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import User from '../models/User.js'
 import generarJWT   from '../helper/generarJWT.js'
+import { json } from 'express'
 
 //Registrar usuario
 const register = async (req,res) => {
@@ -53,16 +54,31 @@ const login = async (req,res) => {
         //Generar JWT se accede user.id o user._id ya que mongo asi lo permite id es un alias de _id
         const token = generarJWT(user.id)
 
-        res.status(200).json({status:"success",msg:"login",token})
+        res.status(200).json({status:"success",msg:"login",
+                                data:{name:user.name,nick:user.nick,email:user.email,token}})
     } catch (error) {
         return res.status(400).json({ status:"error", msg: 'Error en la generacion del token'})
     }
     
 }
 
+//Metodo para obtener un perfil
+const profile = async (req,res) => {
 
+    //Recibo los datos del id
+    const { id } = req.params
+    
+    //verifico si el usuario existe
+    const user = await User.findOne({_id:id})
+    if(!user){
+        return res.status(400).json({ status: "error", msg: "Usuario no encontrado" })
+    }
+
+    return res.status(200).json({ status: "error", msg: "ruta de profile",data:user})
+}
 
 export {
     register,
-    login
+    login,
+    profile
 }

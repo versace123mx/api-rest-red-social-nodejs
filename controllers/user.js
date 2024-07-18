@@ -97,6 +97,7 @@ const list = async (req, res) => {
         totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,data:usuarios})
 }
 
+//Metodo para actualizar datos basicos
 const update = async (req, res) => {
 
     const datos = req.body
@@ -109,6 +110,7 @@ const update = async (req, res) => {
     }
 }
 
+//Metodo para actualizar la imagen de perfil
 const updateImage = async (req,res) => {
     
     try {
@@ -131,11 +133,33 @@ const updateImage = async (req,res) => {
 
 }
 
+//Metodo para obtener la imagen de perfil
+const muestraImagenPerfil = (req,res) => {
+
+    try {
+        //creamos la ruta de la imagen previa
+        const pathImage = `${process.cwd()}/uploads/${req.usuario.imagen}` 
+        
+        //verificamos si existe la imagen
+        if (fs.existsSync(pathImage)) {
+            return res.sendFile(pathImage)
+        }
+
+    } catch (error) {
+        
+    }
+
+    const pathImage = `${process.cwd()}/assets/no-image.jpg`
+    return res.sendFile(pathImage)
+
+}
+
 export {
     register,
     login,
     profile,
     list,
     update,
-    updateImage
+    updateImage,
+    muestraImagenPerfil
 }

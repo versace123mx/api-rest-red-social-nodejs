@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { register, login, profile } from "../controllers/index.js";
+import { register, login, profile, list , update } from "../controllers/index.js";
 const route = Router();
 
 //Rutas publicas
@@ -36,6 +36,18 @@ route.get('/profile/:id',[
     check('id','No es un id de Mongo valido').isMongoId(),
     validarCampos
 ],profile)
+
+//listar y paginar registros
+route.get('/list',validarJWT,list)
+
+//Ruta actualizar usuario solo de el mismo que esta loguado y tiene token
+route.put('/update',[
+    validarJWT,
+    check('name','El campo Name no debe de estar vacio').rtrim().notEmpty().toLowerCase(),
+    check('surname','El campo Surname no debe de estar vacio').rtrim().notEmpty().toLowerCase(),
+    check('bio','El campo bio no debe de estar vacio').rtrim().toLowerCase(),
+    validarCampos
+],update)
 
 
 export default route

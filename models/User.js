@@ -35,6 +35,10 @@ const UserSchema = mongoose.Schema({
         type: String,
         default:"default.png"
     },
+    bio:{
+        type: String,
+        default: ''
+    },
     create_at:{
         type: Date,
         default:Date.now()

@@ -69,7 +69,7 @@ const profile = async (req,res) => {
     const { id } = req.params
     
     //verifico si el usuario existe
-    const user = await User.findOne({_id:id})
+    const user = await User.findById(id)
     if(!user){
         return res.status(400).json({ status: "error", msg: "Usuario no encontrado" })
     }
@@ -77,8 +77,45 @@ const profile = async (req,res) => {
     return res.status(200).json({ status: "error", msg: "ruta de profile",data:user})
 }
 
+//Metodo para extraer los usuarios y paginarlos
+const list = async (req, res) => {
+
+    const { limite = 5, pagina = 1 } = req.query //Los parametros que bienen en la query
+
+    if(isNaN(limite) || isNaN(pagina)){
+        return res.json({ status: "error", msj: 'Los valores deben de ser numeros' });
+    }
+
+    //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
+    const [total, usuarios] = await Promise.all([
+            User.countDocuments({estado: true}),
+            User.find({estado: true}).skip((pagina-1)*limite).limit(limite)
+        ])
+    const totalPaginas = Math.ceil(total/limite)
+    res.status(200).json({ status: "success", msg:"desde el listado",
+        totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,data:usuarios})
+}
+
+const update = async (req, res) => {
+
+    const datos = req.body
+    datos.update_at = Date.now()
+    try {
+        const userUpdate = await User.findByIdAndUpdate(req.usuario.id,datos, {new: true})
+        res.status(200).json({ status: "success", msg:"desde update",data:userUpdate})
+    } catch (error) {
+        res.status(400).json({ status: "error", msg:"no se pudieron actualizar los datos.",data:'',error})
+    }
+}
+
+const updateImage = () => {
+    
+}
+
 export {
     register,
     login,
-    profile
+    profile,
+    list,
+    update
 }

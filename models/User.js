@@ -33,7 +33,7 @@ const UserSchema = mongoose.Schema({
     },
     imagen:{
         type: String,
-        default:"default.png"
+        default:"no-image.jpg"
     },
     bio:{
         type: String,

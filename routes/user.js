@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { register, login, profile, list , update } from "../controllers/index.js";
+import { register, login, profile, list , update, updateImage } from "../controllers/index.js";
 const route = Router();
 
 //Rutas publicas
@@ -49,5 +49,7 @@ route.put('/update',[
     validarCampos
 ],update)
 
+//Ruta para actualizar imagen
+route.put('/update-image',[validarJWT,validarArchivoSubir],updateImage)
 
 export default route

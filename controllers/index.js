@@ -1,9 +1,10 @@
-import { register, login, profile, list, update } from './user.js'
+import { register, login, profile, list, update, updateImage } from './user.js'
 
 export {
     register,
     login,
     profile,
     list,
-    update
+    update,
+    updateImage
 }

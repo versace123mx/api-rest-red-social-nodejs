@@ -1,7 +1,8 @@
+import fs from 'fs'
 import bcrypt from 'bcryptjs'
 import User from '../models/User.js'
 import generarJWT   from '../helper/generarJWT.js'
-import { json } from 'express'
+import { subirArchivo } from '../helper/subir-archivo.js'
 
 //Registrar usuario
 const register = async (req,res) => {
@@ -108,8 +109,26 @@ const update = async (req, res) => {
     }
 }
 
-const updateImage = () => {
+const updateImage = async (req,res) => {
     
+    try {
+        const { imagen } = req.usuario
+    
+        const pathImage = './uploads/' + imagen //creamos la ruta de la imagen previa
+        //verificamos si existe la imagen
+        if (fs.existsSync(pathImage)) {
+                fs.unlinkSync(pathImage)//en caso de que la imagen previa exista procedemos a eliminarla
+        }
+
+        const nombre = await subirArchivo(req.files, undefined)
+        req.usuario.imagen = nombre
+        req.usuario.update_at = Date.now()
+        await req.usuario.save({ new: true })
+        res.status(200).json({ status: "success", msg:"Imagen Actualizada Correctamente"})
+    } catch (error) {
+        res.status(400).json({ status: "error", msg:"No se pudo actualizar la imagen.",data:'',error})
+    }
+
 }
 
 export {
@@ -117,5 +136,6 @@ export {
     login,
     profile,
     list,
-    update
+    update,
+    updateImage
 }

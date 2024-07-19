@@ -1,0 +1,57 @@
+import User from '../models/User.js'
+import Follow from '../models/Follow.js'
+
+//Accion de guardar un follow (accion seguir)
+const follow = async (req, res) => {
+    
+    const { idfolow } = req.body
+
+    if(!idfolow){
+        return res.status(400).json({status:"error",msg:"El campo id follow esta vacio."})
+    }
+
+    if(idfolow == req.usuario.id){
+        return res.status(400).json({status:"error",msg:"No te puedes seguir a ti mismo."})
+    }
+    
+    try {
+
+        //validamos que el usuario a seguir exita y su estado sea true
+        const verificaUser = await User.findById(idfolow)
+
+        if( !verificaUser || !verificaUser.estado ){
+            return res.status(400).json({status:"error",msg:"El usuario no existe o fue dado de baja."})
+        }
+        //validamos que no se siga ya previamente
+        const verificaFollow = await Follow.find({
+            $and:[
+                {user:req.usuario.id},{followed:idfolow}
+            ]
+        })
+
+        //Si el usuario ya se sigue entonces mandamos un error de que no se puede volver a seguir
+        if( verificaFollow.length ){
+            return res.status(400).json({status:"error",msg:"El usuario ya esta en seguimiento."})
+        }
+
+        const follow = new Follow({user:req.usuario.id,followed:idfolow})
+        const resultFollow = await follow.save()
+        res.status(200).json({status:"success",msg:"follow correctamente"})
+        
+    } catch (error) {
+        
+    }
+}
+
+//Accion de borrar un follow (accion dejar de seguir)
+const unfollow = () => {
+
+}
+//Accion listado de usuarios que estoy siguiendo
+
+//Accion listado de usuarios que me siguen
+
+
+export{
+    follow
+}

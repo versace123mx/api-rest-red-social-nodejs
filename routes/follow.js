@@ -1,12 +1,11 @@
 import {Router} from "express";
-import { check } from 'express-validator'
-import { validarCampos, validarArchivoSubir } from '../middleware/index.js'
+import { body, check } from 'express-validator'
+import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
+import { follow } from '../controllers/index.js'
 
 const route = Router();
 
 //Rutas de pruebas
-route.get('/follow',(req,res)=>{
-    res.status(200).json({msg:"Desde follow"})
-})
+route.post('/follow/follow',validarJWT,follow)
 
 export default route

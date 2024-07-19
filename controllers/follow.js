@@ -113,7 +113,40 @@ const followin = async (req, res) => {
 //Accion listado de usuarios que me siguen
 const followers = async (req, res) => {
 
-    res.status(200).json({status:"success",msg:"followers "})
+    try {
+        
+        const results = await Follow.aggregate([
+            {$match: { followed: new mongoose.Types.ObjectId(req.usuario.id) }},
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'followedUser'
+                }
+            },
+            { $unwind: '$followedUser' },
+            {
+                $project: {
+                    _id: 0,
+                    followedUser: {
+                        name: '$followedUser.name',
+                        nick: '$followedUser.nick',
+                        email: '$followedUser.email'
+                    }
+                }
+            }
+        ]);
+
+        if(!results.length){
+            return res.status(200).json({status:"success",msg:"followin ", followedUsers: 'No hay registros a mostrar' })
+        }
+        
+        
+        res.status(200).json({status:"success",msg:"followin ", followedUsers: results.map(result => result.followedUser) })
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Error al intentar Obtener los followin.", error})
+    }
 }
 
 export{

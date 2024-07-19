@@ -1,5 +1,7 @@
 import User from '../models/User.js'
 import Follow from '../models/Follow.js'
+import {mongoose} from "mongoose";
+
 
 //Accion de guardar un follow (accion seguir)
 const follow = async (req, res) => {
@@ -70,11 +72,53 @@ const unfollow = async (req, res) => {
 }
 
 //Accion listado de usuarios que estoy siguiendo
+const followin = async (req, res) => {
+
+    try {
+        
+        const results = await Follow.aggregate([
+            {$match: { user: new mongoose.Types.ObjectId(req.usuario.id) }},
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'followed',
+                    foreignField: '_id',
+                    as: 'followedUser'
+                }
+            },
+            { $unwind: '$followedUser' },
+            {
+                $project: {
+                    _id: 0,
+                    followedUser: {
+                        name: '$followedUser.name',
+                        nick: '$followedUser.nick',
+                        email: '$followedUser.email'
+                    }
+                }
+            }
+        ]);
+
+        if(!results.length){
+            return res.status(200).json({status:"success",msg:"followin ", followedUsers: 'No hay registros a mostrar' })
+        }
+        
+        
+        res.status(200).json({status:"success",msg:"followin ", followedUsers: results.map(result => result.followedUser) })
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Error al intentar Obtener los followin.", error})
+    }
+}
 
 //Accion listado de usuarios que me siguen
+const followers = async (req, res) => {
 
+    res.status(200).json({status:"success",msg:"followers "})
+}
 
 export{
     follow,
-    unfollow
+    unfollow,
+    followin,
+    followers
 }

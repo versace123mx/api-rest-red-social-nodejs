@@ -37,21 +37,44 @@ const follow = async (req, res) => {
         const follow = new Follow({user:req.usuario.id,followed:idfolow})
         const resultFollow = await follow.save()
         res.status(200).json({status:"success",msg:"follow correctamente"})
-        
+
     } catch (error) {
-        
+        return res.status(400).json({status:"error",msg:"No se pudo realizar el seguimiento.", error})
     }
 }
 
 //Accion de borrar un follow (accion dejar de seguir)
-const unfollow = () => {
+const unfollow = async (req, res) => {
+    
+    const { id } = req.params
 
+    try {
+    
+        const {deletedCount} = await Follow.deleteOne({
+            $and:[
+                {user:req.usuario.id},{followed:id}
+            ]
+        })
+
+        if( !deletedCount ){
+            return res.status(400).json({status:"error",msg:"No se pudo eliminar, vuelve a intentarlo o quizas ya ha sido eliminado."})
+        }
+    
+        
+        res.status(200).json({status:"success",msg:"un-follow "})
+
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Error al intentar borrar el usuario.", error})
+    }
+    
 }
+
 //Accion listado de usuarios que estoy siguiendo
 
 //Accion listado de usuarios que me siguen
 
 
 export{
-    follow
+    follow,
+    unfollow
 }

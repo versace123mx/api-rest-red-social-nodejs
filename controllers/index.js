@@ -1,5 +1,5 @@
 import { register, login, profile, list, update, updateImage, muestraImagenPerfil } from './user.js'
-import { follow } from './follow.js'
+import { follow, unfollow } from './follow.js'
 
 export {
     register,
@@ -9,5 +9,6 @@ export {
     update,
     updateImage,
     muestraImagenPerfil,
-    follow
+    follow,
+    unfollow
 }

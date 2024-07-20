@@ -140,7 +140,7 @@ const updateUploadImage = async (req, res) => {
 
     try {
 
-        //verificar si la publicacion esta activa y veri si corresponde con el id
+        //verificar si la publicacion esta activa y verificamos si corresponde con el id
         const validaPublication = await Publication.find({_id:id,user:req.usuario.id,estado:true})
         if(!validaPublication.length){
             return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
@@ -167,7 +167,35 @@ const updateUploadImage = async (req, res) => {
 }
 
 //devolver archivos multimedia imagenes
+const showMediaforId = async (req, res) => {
+    
+    const { id } = req.params
+    
+    try {
 
+        //verificar si la publicacion esta activa
+        const validaPublication = await Publication.find({_id:id,estado:true})
+        if(!validaPublication.length){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
+        }
+
+        //si existe el campo file es por que tiene una imagen asociada
+        if(!validaPublication[0].file){
+            return res.status(404).json({status:"success",msg:"No hay una imagen asociada a este registro",data:[] })
+        }
+
+        //creamos la ruta de la imagen previa
+        const pathImage = `${process.cwd()}/uploads/publication/${validaPublication[0].file}` 
+        
+        //verificamos si existe la imagen
+        if (fs.existsSync(pathImage)) {
+            return res.sendFile(pathImage)
+        }
+
+    } catch (error) {
+        return res.status(400).json({ status: "error", msg:"Error Al obtenr la Imagen.",data:'',error})
+    }
+}
 
 
 export {
@@ -176,5 +204,6 @@ export {
     deletePublication,
     showPublications,
     showPublicationsForUser,
-    updateUploadImage
+    updateUploadImage,
+    showMediaforId
 }

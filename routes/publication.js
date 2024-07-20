@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { createPublication, showPublication, deletePublication } from '../controllers/index.js'
+import { createPublication, showPublication, deletePublication, showPublications } from '../controllers/index.js'
 
 const route = Router();
 
@@ -27,5 +27,7 @@ route.delete('/publication/delete-publication/:id',[
     validarCampos
 ],deletePublication)
 
+//Mostrar todas las publicaciones del usuario logueado y paginado
+route.get('/publication/show-publications',validarJWT,showPublications)
 
 export default route

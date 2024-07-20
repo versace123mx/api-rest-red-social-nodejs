@@ -67,6 +67,36 @@ const deletePublication = async (req, res) => {
 }
 
 //Listar todas las publicaciones del usuario logueado
+const showPublications = async (req, res) => {
+
+    const { limite = 5, pagina = 1 } = req.query //Los parametros que bienen en la query
+
+    if(isNaN(limite) || isNaN(pagina)){
+        return res.json({ status: "error", msj: 'Los valores deben de ser numeros' });
+    }
+
+    try {
+        
+        //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
+        const [total, post] = await Promise.all([
+            Publication.countDocuments({user:req.usuario.id,estado: true}),
+            Publication.find({user:req.usuario.id,estado: true})
+            .skip((pagina-1)*limite).limit(limite).sort({create_at:-1})
+        ])
+
+        if(!post.length){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
+        }
+
+        const totalPaginas = Math.ceil(total/limite)
+        res.status(200).json({ status: "success", msg:"desde el listado",
+        totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,data:post})
+
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Eror en la operacion, no se pudo ejecutar",data:[] })
+    }
+    
+}
 
 //listar publicaciones de un usuario
 
@@ -79,5 +109,6 @@ const deletePublication = async (req, res) => {
 export {
     createPublication,
     showPublication,
-    deletePublication
+    deletePublication,
+    showPublications
 }

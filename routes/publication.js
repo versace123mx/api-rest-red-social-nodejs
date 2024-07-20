@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser } from '../controllers/index.js'
+import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser, updateUploadImage } from '../controllers/index.js'
 
 const route = Router();
 
@@ -36,5 +36,13 @@ route.get('/publication/show-publications/:id',[
     check('id','El id no es un id de Mongo valido').isMongoId(),
     validarCampos
 ],showPublicationsForUser)
+
+//cargar imagen de la publicacion
+route.put('/publication/uploadfile/:id',[
+    validarJWT,
+    check('id','El id no es un id de Mongo valido').isMongoId(),
+    validarCampos,
+    validarArchivoSubir
+],updateUploadImage)
 
 export default route

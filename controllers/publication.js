@@ -1,4 +1,6 @@
+import fs from 'fs'
 import { Publication } from '../models/index.js'
+import { subirArchivo } from '../helper/subir-archivo.js'
 
 //Guardar Publicacion
 const createPublication = async (req, res) => {
@@ -131,7 +133,38 @@ const showPublicationsForUser = async (req, res) => {
 
 }
 
-//subir ficheros
+//subir ficheros (actualizar imagen de la publicacion)
+const updateUploadImage = async (req, res) => {
+
+    const { id } = req.params
+
+    try {
+
+        //verificar si la publicacion esta activa y veri si corresponde con el id
+        const validaPublication = await Publication.find({_id:id,user:req.usuario.id,estado:true})
+        if(!validaPublication.length){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
+        }
+        
+        //si existe el campo file es por que tiene una imagen asociada
+        if(validaPublication[0].file){
+            const pathImage = './uploads/publication/' + validaPublication[0].file //creamos la ruta de la imagen previa
+            //verificamos si existe la imagen
+            if (fs.existsSync(pathImage)) {
+                    fs.unlinkSync(pathImage)//en caso de que la imagen previa exista procedemos a eliminarla
+            }
+        }
+
+        const nombre = await subirArchivo(req.files, undefined,'publication')
+        const result = await Publication.findOneAndUpdate({_id:id},{
+            file:nombre,update_at:Date.now()
+        },{ new: true })
+        res.status(200).json({ status: "success", msg:"Imagen Actualizada Correctamente"})
+    } catch (error) {
+        return res.status(400).json({ status: "error", msg:"No se pudo actualizar la imagen catch.",data:'',error})
+    }
+
+}
 
 //devolver archivos multimedia imagenes
 
@@ -142,5 +175,6 @@ export {
     showPublication,
     deletePublication,
     showPublications,
-    showPublicationsForUser
+    showPublicationsForUser,
+    updateUploadImage
 }

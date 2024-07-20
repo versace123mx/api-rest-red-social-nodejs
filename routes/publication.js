@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { createPublication, showPublication, deletePublication, showPublications } from '../controllers/index.js'
+import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser } from '../controllers/index.js'
 
 const route = Router();
 
@@ -29,5 +29,12 @@ route.delete('/publication/delete-publication/:id',[
 
 //Mostrar todas las publicaciones del usuario logueado y paginado
 route.get('/publication/show-publications',validarJWT,showPublications)
+
+//Mostrar todas las publicaciones de un usuario y paginado
+route.get('/publication/show-publications/:id',[
+    validarJWT,
+    check('id','El id no es un id de Mongo valido').isMongoId(),
+    validarCampos
+],showPublicationsForUser)
 
 export default route

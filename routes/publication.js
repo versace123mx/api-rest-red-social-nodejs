@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser, updateUploadImage, showMediaforId } from '../controllers/index.js'
+import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser, updateUploadImage, showMediaforId, showPublicationForFollowing } from '../controllers/index.js'
 
 const route = Router();
 
@@ -51,6 +51,9 @@ route.get('/publication/show-image-publication/:id',[
     check('id','El id no es un id de Mongo valido').isMongoId(),
     validarCampos
 ],showMediaforId)
+
+//Mostrar las publicaciones de usuarios que sigue el usuario logueado
+route.get('/publication/show-publication-following',validarJWT,showPublicationForFollowing)
 
 
 export default route

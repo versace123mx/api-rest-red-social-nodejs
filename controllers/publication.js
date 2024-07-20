@@ -1,5 +1,6 @@
 import fs from 'fs'
-import { Publication } from '../models/index.js'
+import mongoose from "mongoose";
+import { Publication, Follow } from '../models/index.js'
 import { subirArchivo } from '../helper/subir-archivo.js'
 
 //Guardar Publicacion
@@ -198,6 +199,47 @@ const showMediaforId = async (req, res) => {
 }
 
 
+//Mostra las postulaciones de usuarios que sigo
+const showPublicationForFollowing = async (req, res) => {
+
+    const { limite = 5, pagina = 1 } = req.query //Los parametros que bienen en la query
+
+    if(isNaN(limite) || isNaN(pagina)){
+        return res.json({ status: "error", msj: 'Los valores deben de ser numeros' });
+    }
+    
+    try {
+        
+        const followedUsers = await Follow.find({ user: req.usuario.id }).select('followed');
+
+        //si no hay seguimiento mandamos error
+        if(!followedUsers.length){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados 1",data:[] })
+        }
+
+        const followedUserIds = followedUsers.map(follow => follow.followed);
+
+        const publications = await Publication.find({ user: { $in: followedUserIds},estado:true })
+        .select("-estado -update_at -__v")
+        .populate('user',"-password -estado -role -imagen -update_at -__v -bio -create_at, -email")
+        .skip((pagina-1)*limite).limit(limite).sort({create_at:-1});
+
+        //si no hay publicaciones mandamos error
+        if(!publications.length){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados 2",data:[] })
+        }
+
+        const total = await Publication.countDocuments({ user: { $in: followedUserIds },estado:true });
+
+        const totalPaginas = Math.ceil(total/limite)
+        res.status(200).json({ status: "success", msg:"desde el listado",
+        totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,data:publications})
+        
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Eror en la operacion, no se pudo ejecutar",data:[] })
+    }
+}
+
 export {
     createPublication,
     showPublication,
@@ -205,5 +247,6 @@ export {
     showPublications,
     showPublicationsForUser,
     updateUploadImage,
-    showMediaforId
+    showMediaforId,
+    showPublicationForFollowing
 }

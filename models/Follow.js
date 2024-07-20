@@ -12,6 +12,10 @@ const FollowSchema = mongoose.Schema({
         ref: 'User', //este es la referencia asia el id del usuario
         default: null
     },
+    estado:{
+        type: Boolean,
+        default: true
+    },
     create_at:{
         type: Date,
         default:Date.now()

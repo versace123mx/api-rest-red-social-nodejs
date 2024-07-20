@@ -1,6 +1,6 @@
 import { register, login, profile, list, update, updateImage, muestraImagenPerfil } from './user.js'
 import { follow, unfollow, followin, followers } from './follow.js'
-import { createPublication, showPublication } from './publication.js'
+import { createPublication, showPublication, deletePublication } from './publication.js'
 
 export {
     register,
@@ -15,5 +15,6 @@ export {
     followin,
     followers,
     createPublication,
-    showPublication
+    showPublication,
+    deletePublication
 }

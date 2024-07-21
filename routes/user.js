@@ -9,8 +9,9 @@ const route = Router();
 //Ruta para crear el usuario
 route.post('/user',[
     check('name','El campo nombre es requerido').notEmpty().trim().toLowerCase(),
+    check('name','El campo nombre debe ser minimo de 3 caracteres').isLength({min:3,max:50}).trim().toLowerCase(),
     check('nick','El campo nick es requerido').notEmpty().trim().toLowerCase(),
-    check('nick','El campo nick debe ser minimo de 4 caracteres').isLength({min:8,max:50}).trim().toLowerCase(),
+    check('nick','El campo nick debe ser minimo de 3 caracteres').isLength({min:3,max:50}).trim().toLowerCase(),
     check('email','El campo email es requerido').notEmpty().trim().toLowerCase(),
     check('email','El campo email no tine formato de email valido').isEmail().trim().toLowerCase(),
     check('password','El campo password es requerido').notEmpty().trim(),

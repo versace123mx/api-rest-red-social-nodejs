@@ -75,7 +75,7 @@ const profile = async (req,res) => {
         return res.status(400).json({ status: "error", msg: "Usuario no encontrado" })
     }
 
-    return res.status(200).json({ status: "error", msg: "ruta de profile",data:user})
+    return res.status(200).json({ status: "success", msg: "ruta de profile",data:user})
 }
 
 //Metodo para extraer los usuarios y paginarlos
